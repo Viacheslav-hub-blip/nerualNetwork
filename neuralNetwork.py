@@ -1,8 +1,7 @@
 import numpy as numpy
 import scipy.special
 import matplotlib.pyplot
-
-
+#% matplotlib inline
 
 
 class neuralNetwork:
@@ -33,10 +32,11 @@ class neuralNetwork:
 
         hidden_errors = numpy.dot(self.who.T, output_errors)
 
-        self.who += self.lr * numpy.dot((output_errors * final_outputs * (1.0 - final_outputs), numpy.transpose(hidden_outputs)))
+        self.who += self.lr * numpy.dot(
+            (output_errors * final_outputs * (1.0 - final_outputs), numpy.transpose(hidden_outputs)))
 
-        self.wih += self.lr * numpy.dot((hidden_errors * hidden_outputs * (1.0 - hidden_outputs)), numpy.transpose(inputs))
-
+        self.wih += self.lr * numpy.dot((hidden_errors * hidden_outputs * (1.0 - hidden_outputs)),
+                                        numpy.transpose(inputs))
 
     def query(self, inputs_list):
         inputs = numpy.array(inputs_list, ndmin=2).T
@@ -50,9 +50,9 @@ class neuralNetwork:
         return final_outputs
 
 
-input_nodes = 3
-output_nodes = 3
-hidden_nodes = 3
+input_nodes = 784
+hidden_nodes = 100
+output_nodes = 10
 
 learning_rate = 0.3
 
@@ -61,9 +61,20 @@ n = neuralNetwork(input_nodes, hidden_nodes, output_nodes, learning_rate)
 data_file = open("mnist_train_100.csv")
 data_list = data_file.readlines()
 
-all_values = data_list[0].split(',')
-image_array = numpy.asfarray(all_values[1:]).reshape((28, 28))
-matplotlib.pyplot.imshow(image_array, cmap='Greys', interpolation='None')
+for record in data_list:
+    all_values = record.split(',')
+    inputs = (numpy.asfarray(all_values[1:]) / 255.0 * 0.99) + 0.01
+    targets = numpy.zeros(output_nodes) + 0.01
+    targets[int(all_values[0])] = 0.99
+
+    n.train(inputs, targets)
+
+# onodes = 10
+# image_array = numpy.asfarray(all_values[1:]).reshape((28, 28))
+# matplotlib.pyplot.imshow(image_array, cmap='Greys', interpolation='None')
+
+# scaled_input = (numpy.asfarray(all_values[1:]) / 255.0 * 0.99) + 0.01
+# print(scaled_input)
 
 
 
